@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 45 33% 97%;
+  --foreground: 210 34% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 210 34% 12%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 34% 12%;
+  --primary: 191 62% 32%;
+  --primary-foreground: 40 60% 97%;
+  --secondary: 201 18% 92%;
+  --secondary-foreground: 210 30% 20%;
+  --muted: 201 18% 92%;
+  --muted-foreground: 210 18% 38%;
+  --accent: 17 71% 46%;
+  --accent-foreground: 40 60% 97%;
+  --destructive: 0 73% 48%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 210 21% 85%;
+  --input: 210 21% 85%;
+  --ring: 191 62% 32%;
+  --radius: 0.65rem;
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+  font-family: "Aptos", "Segoe UI Variable", "Avenir Next", sans-serif;
+  background-image:
+    radial-gradient(circle at 15% 20%, hsl(191 72% 92%) 0%, transparent 35%),
+    radial-gradient(circle at 85% 5%, hsl(25 90% 93%) 0%, transparent 30%),
+    radial-gradient(circle at 55% 100%, hsl(191 55% 95%) 0%, transparent 45%);
+}
