@@ -21,11 +21,11 @@ export default async function AdminSettingsPage({
   const [categoriesResult, statusesResult] = await Promise.all([
     supabase
       .from("entry_categories")
-      .select("id, name, is_active, requires_project, created_at")
+      .select("id, name, is_active, requires_project, created_at, updated_at")
       .order("created_at", { ascending: true }),
     supabase
       .from("entry_statuses")
-      .select("id, name, is_active, requires_comment, is_blocker, created_at")
+      .select("id, name, is_active, requires_comment, is_blocker, created_at, updated_at")
       .order("created_at", { ascending: true })
   ]);
 

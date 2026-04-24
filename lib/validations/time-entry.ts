@@ -1,18 +1,20 @@
 import { z } from "zod";
 
-export const createTimeEntrySchema = z
-  .object({
-    workDate: z.string().date("Enter a valid date."),
-    hours: z.coerce
-      .number()
-      .positive("Hours must be greater than 0.")
-      .max(24, "Hours cannot exceed 24."),
-    category: z.enum(["project", "time_off", "office_process", "free_open"]),
-    projectId: z.string().uuid().optional(),
-    comment: z.string().trim().max(1000).optional(),
-    statusFlag: z.enum(["none", "needs_review", "blocked"]).optional()
-  })
-  .superRefine((value, context) => {
+const baseTimeEntrySchema = z.object({
+  workDate: z.string().date("Enter a valid date."),
+  hours: z.coerce
+    .number()
+    .positive("Hours must be greater than 0.")
+    .max(24, "Hours cannot exceed 24."),
+  category: z.enum(["project", "time_off", "office_process", "free_open"]),
+  projectId: z.string().uuid().optional(),
+  comment: z.string().trim().max(1000).optional(),
+  statusFlag: z.enum(["none", "needs_review", "blocked"]).optional()
+});
+
+type BaseTimeEntry = z.infer<typeof baseTimeEntrySchema>;
+
+const refineProjectDependency = (value: BaseTimeEntry, context: z.RefinementCtx) => {
     if (value.category === "project" && !value.projectId) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
@@ -28,12 +30,16 @@ export const createTimeEntrySchema = z
         message: "Project must be empty for non-project categories."
       });
     }
-  });
+  };
+
+export const createTimeEntrySchema = baseTimeEntrySchema.superRefine(refineProjectDependency);
 
 export type CreateTimeEntryInput = z.infer<typeof createTimeEntrySchema>;
 
-export const updateTimeEntrySchema = createTimeEntrySchema.extend({
-  timeEntryId: z.string().uuid("Invalid time entry id.")
-});
+export const updateTimeEntrySchema = baseTimeEntrySchema
+  .extend({
+    timeEntryId: z.string().uuid("Invalid time entry id.")
+  })
+  .superRefine(refineProjectDependency);
 
 export type UpdateTimeEntryInput = z.infer<typeof updateTimeEntrySchema>;
