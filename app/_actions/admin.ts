@@ -8,10 +8,16 @@ import { toRoute } from "@/lib/routes";
 import {
   accessRuleSchema,
   assignProjectSchema,
+  createCategorySchema,
   createProjectSchema,
+  createStatusSchema,
+  setCategoryStatusSchema,
   setAssignmentStatusSchema,
   setProjectStatusSchema,
+  setStatusFlagSchema,
+  updateCategorySchema,
   updateProjectSchema,
+  updateStatusSchema,
   updateUserAccessSchema,
   updateUserRoleSchema
 } from "@/lib/validations/admin";
@@ -277,3 +283,174 @@ export async function createAccessRuleAction(formData: FormData) {
   revalidatePath("/admin/users");
   redirect(withMessage(pathname, "message", "Access rule saved."));
 }
+
+// ---- Entry Categories ----
+
+export async function createCategoryAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const pathname = "/admin/settings";
+  const parsed = createCategorySchema.safeParse({
+    name: formData.get("name"),
+    requiresProject: formData.get("requiresProject")
+  });
+
+  if (!parsed.success) {
+    redirect(withMessage(pathname, "error", parsed.error.issues[0]?.message ?? "Invalid input."));
+  }
+
+  const { error } = await supabase.from("entry_categories").insert({
+    name: parsed.data.name,
+    requires_project: parsed.data.requiresProject === "true"
+  });
+
+  if (error) {
+    redirect(withMessage(pathname, "error", error.code === "23505" ? "A category with that name already exists." : error.message));
+  }
+
+  revalidatePath("/admin/settings");
+  redirect(withMessage(pathname, "message", "Category created."));
+}
+
+export async function updateCategoryAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const pathname = "/admin/settings";
+  const parsed = updateCategorySchema.safeParse({
+    categoryId: formData.get("categoryId"),
+    name: formData.get("name"),
+    requiresProject: formData.get("requiresProject")
+  });
+
+  if (!parsed.success) {
+    redirect(withMessage(pathname, "error", parsed.error.issues[0]?.message ?? "Invalid category update."));
+  }
+
+  const { error } = await supabase
+    .from("entry_categories")
+    .update({
+      name: parsed.data.name,
+      requires_project: parsed.data.requiresProject === "true"
+    })
+    .eq("id", parsed.data.categoryId);
+
+  if (error) {
+    redirect(withMessage(pathname, "error", error.code === "23505" ? "A category with that name already exists." : error.message));
+  }
+
+  revalidatePath("/admin/settings");
+  redirect(withMessage(pathname, "message", "Category updated."));
+}
+
+export async function setCategoryStatusAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const pathname = "/admin/settings";
+  const parsed = setCategoryStatusSchema.safeParse({
+    categoryId: formData.get("categoryId"),
+    isActive: formData.get("isActive")
+  });
+
+  if (!parsed.success) {
+    redirect(withMessage(pathname, "error", parsed.error.issues[0]?.message ?? "Invalid category status."));
+  }
+
+  const isActive = parsed.data.isActive === "true";
+
+  const { error } = await supabase
+    .from("entry_categories")
+    .update({ is_active: isActive })
+    .eq("id", parsed.data.categoryId);
+
+  if (error) {
+    redirect(withMessage(pathname, "error", error.message));
+  }
+
+  revalidatePath("/admin/settings");
+  redirect(withMessage(pathname, "message", isActive ? "Category activated." : "Category deactivated."));
+}
+
+// ---- Entry Statuses ----
+
+export async function createStatusAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const pathname = "/admin/settings";
+  const parsed = createStatusSchema.safeParse({
+    name: formData.get("name"),
+    requiresComment: formData.get("requiresComment"),
+    isBlocker: formData.get("isBlocker")
+  });
+
+  if (!parsed.success) {
+    redirect(withMessage(pathname, "error", parsed.error.issues[0]?.message ?? "Invalid input."));
+  }
+
+  const { error } = await supabase.from("entry_statuses").insert({
+    name: parsed.data.name,
+    requires_comment: parsed.data.requiresComment === "true",
+    is_blocker: parsed.data.isBlocker === "true"
+  });
+
+  if (error) {
+    redirect(withMessage(pathname, "error", error.code === "23505" ? "A status with that name already exists." : error.message));
+  }
+
+  revalidatePath("/admin/settings");
+  redirect(withMessage(pathname, "message", "Status created."));
+}
+
+export async function updateStatusAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const pathname = "/admin/settings";
+  const parsed = updateStatusSchema.safeParse({
+    statusId: formData.get("statusId"),
+    name: formData.get("name"),
+    requiresComment: formData.get("requiresComment"),
+    isBlocker: formData.get("isBlocker")
+  });
+
+  if (!parsed.success) {
+    redirect(withMessage(pathname, "error", parsed.error.issues[0]?.message ?? "Invalid status update."));
+  }
+
+  const { error } = await supabase
+    .from("entry_statuses")
+    .update({
+      name: parsed.data.name,
+      requires_comment: parsed.data.requiresComment === "true",
+      is_blocker: parsed.data.isBlocker === "true"
+    })
+    .eq("id", parsed.data.statusId);
+
+  if (error) {
+    redirect(withMessage(pathname, "error", error.code === "23505" ? "A status with that name already exists." : error.message));
+  }
+
+  revalidatePath("/admin/settings");
+  redirect(withMessage(pathname, "message", "Status updated."));
+}
+
+export async function setStatusActiveAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const pathname = "/admin/settings";
+  const parsed = setStatusFlagSchema.safeParse({
+    statusId: formData.get("statusId"),
+    isActive: formData.get("isActive")
+  });
+
+  if (!parsed.success) {
+    redirect(withMessage(pathname, "error", parsed.error.issues[0]?.message ?? "Invalid status toggle."));
+  }
+
+  const isActive = parsed.data.isActive === "true";
+
+  const { error } = await supabase
+    .from("entry_statuses")
+    .update({ is_active: isActive })
+    .eq("id", parsed.data.statusId);
+
+  if (error) {
+    redirect(withMessage(pathname, "error", error.message));
+  }
+
+  revalidatePath("/admin/settings");
+  redirect(withMessage(pathname, "message", isActive ? "Status activated." : "Status deactivated."));
+}
+

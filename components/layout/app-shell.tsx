@@ -16,11 +16,16 @@ export function AppShell({ children, profile }: AppShellProps) {
     profile.role === "admin"
       ? [
           { href: "/dashboard", label: "My Time" },
+          { href: "/dashboard/calendar", label: "Calendar" },
           { href: "/admin", label: "Admin Dashboard" },
           { href: "/admin/projects", label: "Projects" },
-          { href: "/admin/users", label: "Users" }
+          { href: "/admin/users", label: "Users" },
+          { href: "/admin/settings", label: "Settings" }
         ]
-      : [{ href: "/dashboard", label: "My Time" }];
+      : [
+          { href: "/dashboard", label: "My Time" },
+          { href: "/dashboard/calendar", label: "Calendar" }
+        ];
 
   return (
     <div className="min-h-screen">

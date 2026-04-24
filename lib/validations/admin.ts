@@ -57,3 +57,40 @@ export const accessRuleSchema = z.object({
     .max(255, "Rule value is too long."),
   note: z.string().trim().max(255).optional()
 });
+
+// --- Entry Categories ---
+export const createCategorySchema = z.object({
+  name: z.string().trim().min(2, "Category name is too short.").max(80),
+  requiresProject: z.enum(["true", "false"]).optional()
+});
+
+export const updateCategorySchema = z.object({
+  categoryId: z.string().uuid("Invalid category id."),
+  name: z.string().trim().min(2, "Category name is too short.").max(80),
+  requiresProject: z.enum(["true", "false"]).optional()
+});
+
+export const setCategoryStatusSchema = z.object({
+  categoryId: z.string().uuid("Invalid category id."),
+  isActive: z.enum(["true", "false"])
+});
+
+// --- Entry Statuses ---
+export const createStatusSchema = z.object({
+  name: z.string().trim().min(2, "Status name is too short.").max(80),
+  requiresComment: z.enum(["true", "false"]).optional(),
+  isBlocker: z.enum(["true", "false"]).optional()
+});
+
+export const updateStatusSchema = z.object({
+  statusId: z.string().uuid("Invalid status id."),
+  name: z.string().trim().min(2, "Status name is too short.").max(80),
+  requiresComment: z.enum(["true", "false"]).optional(),
+  isBlocker: z.enum(["true", "false"]).optional()
+});
+
+export const setStatusFlagSchema = z.object({
+  statusId: z.string().uuid("Invalid status id."),
+  isActive: z.enum(["true", "false"])
+});
+

@@ -9,6 +9,63 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      entry_categories: {
+        Row: {
+          id: string;
+          name: string;
+          is_active: boolean;
+          requires_project: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          is_active?: boolean;
+          requires_project?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          is_active?: boolean;
+          requires_project?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      entry_statuses: {
+        Row: {
+          id: string;
+          name: string;
+          is_active: boolean;
+          requires_comment: boolean;
+          is_blocker: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          is_active?: boolean;
+          requires_comment?: boolean;
+          is_blocker?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          is_active?: boolean;
+          requires_comment?: boolean;
+          is_blocker?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       access_rules: {
         Row: {
           access_value: string;
