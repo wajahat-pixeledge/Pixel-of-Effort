@@ -22,7 +22,10 @@ export async function signInWithEmailAction(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const origin = (await headers()).get("origin") ?? "http://localhost:3000";
+  const headersList = await headers();
+  const host = headersList.get("x-forwarded-host") ?? headersList.get("host") ?? "localhost:3000";
+  const protocol = headersList.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
+  const origin = `${protocol}://${host}`;
 
   const { error } = await supabase.auth.signInWithOtp({
     email: parsed.data.email,

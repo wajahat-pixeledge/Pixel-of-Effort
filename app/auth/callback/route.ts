@@ -5,6 +5,10 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? requestUrl.host;
+  const protocol = request.headers.get("x-forwarded-proto") ?? requestUrl.protocol.replace(":", "");
+  const origin = `${protocol}://${host}`;
+
   const code = requestUrl.searchParams.get("code");
   const nextPath = requestUrl.searchParams.get("next");
 
@@ -46,6 +50,6 @@ export async function GET(request: NextRequest) {
   const finalPath =
     nextPath && nextPath.startsWith("/") && nextPath !== "/sign-in" ? nextPath : resolvedPath;
 
-  const redirectUrl = new URL(finalPath, requestUrl.origin);
+  const redirectUrl = new URL(finalPath, origin);
   return NextResponse.redirect(redirectUrl);
 }
