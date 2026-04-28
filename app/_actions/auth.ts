@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { toRoute } from "@/lib/routes";
+import { getSiteUrl } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
 import { signInSchema } from "@/lib/validations/auth";
 
@@ -25,7 +26,7 @@ export async function signInWithEmailAction(formData: FormData) {
   const headersList = await headers();
   const host = headersList.get("x-forwarded-host") ?? headersList.get("host") ?? "localhost:3000";
   const protocol = headersList.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
-  const origin = `${protocol}://${host}`;
+  const origin = getSiteUrl(host, protocol);
 
   const { error } = await supabase.auth.signInWithOtp({
     email: parsed.data.email,

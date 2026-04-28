@@ -70,6 +70,7 @@ Because Pixel of Effort relies largely on Vercel and Supabase cloud infrastructu
 ### 2. Local Environment Variables
 Create a `.env.local` file at the root of the project:
 ```env
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
@@ -91,5 +92,7 @@ Navigate to `http://localhost:3000`.
 ### 4. Production Deployment (Vercel)
 The project is optimized for a zero-config deployment to Vercel:
 1. Connect your GitHub repository to Vercel.
-2. Under **Environment Variables**, add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-3. Hit **Deploy**. The environment will compile optimally with Next.js specific caching and Edge functionality out-of-the-box.
+2. Under **Environment Variables**, add `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+3. Set `NEXT_PUBLIC_APP_URL` to your public Vercel domain, for example `https://your-app.vercel.app`.
+4. In Supabase Auth settings, make sure both the **Site URL** and allowed redirect URLs include your production callback URL, for example `https://your-app.vercel.app/auth/callback`.
+5. Hit **Deploy**. The environment will compile optimally with Next.js specific caching and Edge functionality out-of-the-box.
